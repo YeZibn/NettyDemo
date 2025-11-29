@@ -58,6 +58,7 @@ public class EventLoopClient {
         // 同步方式，等待关闭连接
         ChannelFuture closeFuture = channel.closeFuture();
         System.out.println("waiting close...");
+        // 等待关闭连接完成，阻塞当前线程
         closeFuture.sync();
         // 关闭连接后，释放NIO线程组资源
         group.shutdownGracefully();
