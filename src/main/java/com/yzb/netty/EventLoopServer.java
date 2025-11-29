@@ -14,8 +14,6 @@ import java.nio.charset.Charset;
 @Slf4j
 public class EventLoopServer {
     public static void main(String[] args) throws InterruptedException {
-        EventLoopGroup group = new DefaultEventLoopGroup();
-
         new ServerBootstrap()
                 // boss 线程组，处理连接请求。worker 线程组，处理业务。
                 .group(new NioEventLoopGroup(), new NioEventLoopGroup())
@@ -23,7 +21,12 @@ public class EventLoopServer {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
-                        nioSocketChannel.pipeline().addLast(group, "handler", new ChannelInboundHandlerAdapter() {
+                        nioSocketChannel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                log.debug("客户端连接成功：{}", ctx.channel().remoteAddress());
+                            }
+
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                                 ByteBuf buf = (ByteBuf) msg;
