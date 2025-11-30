@@ -22,8 +22,8 @@ public class Server {
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             ch.pipeline().addLast(new FixedLengthFrameDecoder(10));
+                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                         }
                     })
                     .bind(8888);

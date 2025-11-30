@@ -22,11 +22,12 @@ public class Client {
                                 ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                                     @Override
                                     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
-                                        ByteBuf buffer = ctx.alloc().buffer(16);
-                                        buffer.writeBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+                                        ByteBuf buffer = ctx.alloc().buffer();
+                                        for (int i = 0; i < 10; i++) {
+                                            buffer.writeBytes(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+                                        }
                                         ctx.writeAndFlush(buffer);
-                                        ctx.channel().close();
+//                                      ctx.channel().close();
                                     }
                                 });
                             }
@@ -44,10 +45,7 @@ public class Client {
         }
 
         public static void main(String[] args) throws InterruptedException {
-            for (int i = 0; i < 10; i++)
-            {
-                send();
-            }
+            send();
             System.out.println("over");
         }
 }
