@@ -132,7 +132,7 @@ public class ChatClient {
                     });
                 }
             });
-            Channel channel = bs.connect("localhost", 8080).sync().channel();
+            Channel channel = bs.connect("localhost", 8888).sync().channel();
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("Client error", e);

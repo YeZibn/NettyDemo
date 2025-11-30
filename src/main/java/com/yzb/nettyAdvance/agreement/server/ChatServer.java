@@ -1,16 +1,14 @@
 package com.yzb.nettyAdvance.agreement.server;
 
 
-import com.yzb.nettyAdvance.agreement.message.LoginRequestMessage;
-import com.yzb.nettyAdvance.agreement.message.LoginResponseMessage;
 import com.yzb.nettyAdvance.agreement.protocol.MessageCodecSharable;
 import com.yzb.nettyAdvance.agreement.protocol.ProtocolFrameDecoder;
-import com.yzb.nettyAdvance.agreement.server.service.UserServiceFactory;
+import com.yzb.nettyAdvance.agreement.server.handler.ChatRequestMessageHandler;
+import com.yzb.nettyAdvance.agreement.server.handler.GroupCreateRequestMessageHandler;
+import com.yzb.nettyAdvance.agreement.server.handler.LoginRequestMessageHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -33,6 +31,9 @@ public class ChatServer {
 
         MessageCodecSharable MESSAGE_CODEC = new MessageCodecSharable();
         LoggingHandler LOGGING_HANDLER = new LoggingHandler(LogLevel.DEBUG);
+        LoginRequestMessageHandler LOGIN_HANDLER = new LoginRequestMessageHandler();
+        ChatRequestMessageHandler CHAT_HANDLER = new ChatRequestMessageHandler();
+        GroupCreateRequestMessageHandler GROUP_CREATE_HANDLER = new GroupCreateRequestMessageHandler();
 
         try {
             final ServerBootstrap bs = new ServerBootstrap();
@@ -44,24 +45,13 @@ public class ChatServer {
                     ch.pipeline().addLast(new ProtocolFrameDecoder());
                     ch.pipeline().addLast(LOGGING_HANDLER);
                     ch.pipeline().addLast(MESSAGE_CODEC);
-                    ch.pipeline().addLast(new SimpleChannelInboundHandler<LoginRequestMessage>() {
-                        @Override
-                        protected void channelRead0(ChannelHandlerContext channelHandlerContext, LoginRequestMessage loginRequestMessage) throws Exception {
-                            String username = loginRequestMessage.getUsername();
-                            String password = loginRequestMessage.getPassword();
-                            boolean login = UserServiceFactory.getUserService().login(username, password);
-                            if(login)
-                            {
-                                channelHandlerContext.writeAndFlush(new LoginResponseMessage(true, "登录成功"));
-                            }else {
-                                channelHandlerContext.writeAndFlush(new LoginResponseMessage(false, "用户名或密码错误"));
-                            }
-                        }
-                    });
+                    ch.pipeline().addLast(LOGIN_HANDLER);
+                    ch.pipeline().addLast(CHAT_HANDLER);
+                    ch.pipeline().addLast(GROUP_CREATE_HANDLER);
                 }
             });
 
-            ChannelFuture channelFuture = bs.bind(8080).sync();
+            ChannelFuture channelFuture = bs.bind(8888).sync();
             channelFuture.channel().closeFuture().sync();
 
         } catch (InterruptedException e) {
