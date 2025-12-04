@@ -6,6 +6,7 @@ import com.yzb.nettyAdvance.agreement.server.session.Group;
 import com.yzb.nettyAdvance.agreement.server.session.GroupSession;
 import com.yzb.nettyAdvance.agreement.server.session.GroupSessionFactory;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+@ChannelHandler.Sharable
 public class GroupCreateRequestMessageHandler extends SimpleChannelInboundHandler<GroupCreateRequestMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, GroupCreateRequestMessage groupCreateRequestMessage) throws Exception {

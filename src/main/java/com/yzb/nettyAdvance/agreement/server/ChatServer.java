@@ -3,9 +3,7 @@ package com.yzb.nettyAdvance.agreement.server;
 
 import com.yzb.nettyAdvance.agreement.protocol.MessageCodecSharable;
 import com.yzb.nettyAdvance.agreement.protocol.ProtocolFrameDecoder;
-import com.yzb.nettyAdvance.agreement.server.handler.ChatRequestMessageHandler;
-import com.yzb.nettyAdvance.agreement.server.handler.GroupCreateRequestMessageHandler;
-import com.yzb.nettyAdvance.agreement.server.handler.LoginRequestMessageHandler;
+import com.yzb.nettyAdvance.agreement.server.handler.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -34,6 +32,10 @@ public class ChatServer {
         LoginRequestMessageHandler LOGIN_HANDLER = new LoginRequestMessageHandler();
         ChatRequestMessageHandler CHAT_HANDLER = new ChatRequestMessageHandler();
         GroupCreateRequestMessageHandler GROUP_CREATE_HANDLER = new GroupCreateRequestMessageHandler();
+        GroupChatRequestMessageHandler GROUP_CHAT_HANDLER = new GroupChatRequestMessageHandler();
+        QuitHandler QUIT_HANDLER = new QuitHandler();
+
+
 
         try {
             final ServerBootstrap bs = new ServerBootstrap();
@@ -48,6 +50,8 @@ public class ChatServer {
                     ch.pipeline().addLast(LOGIN_HANDLER);
                     ch.pipeline().addLast(CHAT_HANDLER);
                     ch.pipeline().addLast(GROUP_CREATE_HANDLER);
+                    ch.pipeline().addLast(GROUP_CHAT_HANDLER);
+                    ch.pipeline().addLast(QUIT_HANDLER);
                 }
             });
 
